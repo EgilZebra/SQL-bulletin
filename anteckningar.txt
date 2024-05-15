@@ -1,0 +1,23 @@
+
+X ER-diagram
+	Formatera ordentligt
+
+
+API
+
+Databas
+
+	Databas
+		- användare( users )
+		- meddelanden( notes )
+		- kanaler( channels )
+	
+	SQLiteviewer - florian
+	
+	Databaser
+	View
+	api
+		
+
+	
+
