@@ -9,18 +9,7 @@ const db = new sqlite.Database(dbPath, (error) => {
     }
 });
 
-db.run(`
-    CREATE VIEW IF NOT EXISTS
-    subscribed_channels
-    AS SELECT
-    user.username, user.
-    `, (error) => {
-    if (error) {
-        console.log(error)
-    } else {
-        console.log("Channels view created")
-    }
-})
+
 
 
 

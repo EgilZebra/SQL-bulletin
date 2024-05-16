@@ -9,13 +9,6 @@ const db = new sqlite.Database(dbPath, (error) => {
     }
 });
 
-db.run(``, (error) => {
-    if (error) {
-        console.log(error)
-    } else {
-        console.log("User view created")
-    }
-})
 
 
 
