@@ -1,6 +1,11 @@
 
 const getNote = async ( req, res ) => {
-    const note = await getUserNotes( req.body.channelId || req.body.userId )
+    let note;
+    if ( req.body.userID ) {
+        note = await getUserNotes( req.body.userId )
+    } else if ( req.body.channelID ) {
+        note = await getChannelNotes( req.body.channelId )
+    }
     try {
         if ( note ) {
             res.status(200).json(note);
