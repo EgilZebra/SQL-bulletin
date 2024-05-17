@@ -13,10 +13,57 @@ Databas
 		- kanaler( channels )
 	
 	SQLiteviewer - florian
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	FUNKTIONER - Egil!
+		USERS
+			login user svara med USERID.
+			signup user
+		NOTES
+			getOneNote
+			postOneNote
+			putOneNote
+			deleteOneNote
 	
-	Databaser
-	View
-	api
+		CHANNELS
+			createChannel
+			followChannel
+			watchChannel
+
+	 DATABAS Yosef!
+		databas - users
+				username - id - (ägda kanaler) - (postade meddelanden) - (kanal prenumerationer)
+		databas - notes
+				postdatum - (skriven av) - (tillhört kanal)
+		databas - channels
+				kanalnamn - startdatum - (ägd av) - (antal pernumeranter)
+
+	VIEWS Rolf!
+		SELECT note FROM notes
+		INSERT note INTO notes
+
+		SELECT user FROM users
+		INSERT user INTO users
+		
+		INSERT channel INTO channels
+		SELECT channel FROM channels
+	
+
 		
 
 	

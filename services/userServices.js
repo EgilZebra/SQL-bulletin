@@ -3,7 +3,7 @@
 export const createNewUser = async (Signup) => {
     const { username, password } = Signup;
     return new Promise((resovle, reject) => {
-        db.run('INSERT INTO users ( user_Name, user_Password ) VALUES ( ?, ?, ? )', [ username, password ], function(error) {
+        db.run('INSERT INTO User ( user_Name, user_Password ) VALUES ( ?, ? )', [ username, password ], function(error) {
             if (error) {
                 console.log(error);
                 reject(error);

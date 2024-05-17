@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require("uuid");
+
 const { createNewUser, checkUserName } = require('../services/userServices')
 
 // Create a new user 

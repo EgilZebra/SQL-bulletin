@@ -1,8 +1,13 @@
 const express = require('express');
 const route = express.Router();
-const { getChannel, postChannel, removeChannel, updateChannel } = require('../controllers/channelController')
+const { getChannel, postChannel, checkSubscribers } = require('../controllers/channelController')
 
-route.get( '/', getChannel)
-route.post( '/', postChannel)
-route.delete( '/', removeChannel)
-route.put( '/', updateChannel)
+// create channel
+route.post( '/create', postChannel)
+// subscribe to channel
+route.post( '/subscribe', getChannel)
+// how many subscribers to a channel
+route.get('/', checkSubscribers)
+
+// route.delete( '/', removeChannel)
+// route.put( '/', updateChannel)
