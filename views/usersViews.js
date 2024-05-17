@@ -1,7 +1,7 @@
 const sqlite = require("sqlite3").verbose();
 const path = require("path");
 
-const dbPath = path.join(__dirname, "..", "models", "users.db");
+const dbPath = path.join(__dirname, "..", "models", "database.db");
 
 const db = new sqlite.Database(dbPath, (error) => {
     if (error) {
@@ -9,9 +9,24 @@ const db = new sqlite.Database(dbPath, (error) => {
     }
 });
 
+//get view of all users subscribed to a channel
+module.exports.getChannelUsers = (channelID, callback) => {
+    db.run(`
+    CREATE OR REPLACE VIEW channelUsers
+    AS SELECT Subscription.channel_ID AS channel,
+    Subscription.user_ID AS user
+    FROM Subscription
+    JOIN Channel ON Subscription.channel_ID = Channel.channel_ID
+    WHERE Subscription.channel_ID = ?
+    `, [channelID], (error) => {
+        if (error) {
+            console.log(error);
+            callback(error);
+        } else {
+            callback(null);
+        }
+    })
+}
 
-
-
-
-//SELECT user FROM users
-//INSERT user INTO users
+/* users views
+-all users subscribed to a channel */
