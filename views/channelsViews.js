@@ -50,9 +50,3 @@ module.exports.getUserSubscriptions = (userId) => {
         });
     });
 }
-
-
-
-/* channels views
--all channels owned by a user
--all channels subscribed to by a user */

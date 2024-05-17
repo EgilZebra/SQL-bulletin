@@ -29,6 +29,3 @@ module.exports.getChannelUsers = (channelID) => {
         });
     });
 }
-
-/* users views
--all users subscribed to a channel */

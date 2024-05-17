@@ -24,7 +24,7 @@ module.exports.getChannelNotes = (channelId) => {
                 console.log(error);
                 reject(error);
             } else {
-                resolve(row) ; //viewen
+                resolve(row);
             }
         });
     });
@@ -45,7 +45,7 @@ module.exports.getUserNotes = (userId) => {
                 console.log(error);
                 reject(error);
             } else {
-                resolve(row); //viewen
+                resolve(row);
             }
         });
     });
