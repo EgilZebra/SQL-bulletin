@@ -19,12 +19,12 @@ module.exports.getChannelNotes = (channelId) => {
         FROM Channel
         JOIN Note ON Channel.channel_ID = Note.channel_ID
         WHERE Channel.channel_ID = ?
-        `, [channelId], (error) => {
+        `, [channelId], (error, row) => {
             if (error) {
                 console.log(error);
                 reject(error);
             } else {
-                resolve(``) ; //viewen
+                resolve(row) ; //viewen
             }
         });
     })
@@ -40,12 +40,12 @@ module.exports.getUserNotes = (userId) => {
         FROM User
         JOIN Note ON User.user_ID = Note.user_ID
         WHERE User.user_ID = ?
-        `, [userId], (error) => {
+        `, [userId], (error, row) => {
             if (error) {
                 console.log(error);
                 reject(error);
             } else {
-                resolve(); //viewen
+                resolve(row); //viewen
             }
         });
     })
