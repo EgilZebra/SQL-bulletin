@@ -35,9 +35,19 @@ function initDatabase() {
         CREATE TABLE IF NOT EXISTS Note (
             note_ID INTEGER PRIMARY KEY,
             note TEXT,
-            created_at DATETIME,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             user_ID INTEGER, 
             FOREIGN KEY (user_ID) REFERENCES User(user_ID)
+        );
+    `;
+
+    const sql_subscriptionTable = `
+        CREATE TABLE IF NOT EXISTS Subscription (
+            subscription_ID INTEGER PRIMARY KEY,
+            user_ID INTEGER,
+            channel_ID INTEGER, 
+            FOREIGN KEY (user_ID) REFERENCES User(user_ID),
+            FOREIGN KEY (channel_ID) REFERENCES Channel(channel_ID)
         );
     `;
 
@@ -62,12 +72,19 @@ function initDatabase() {
                         return;
                     }
                     console.log("Note table created successfully");
-
-                    console.log("All tables created successfully");
+                    
+                    db.run(sql_subscriptionTable, subscriptionErr  => {
+                        if (subscriptionErr) {
+                            console.error("Error creating subscription table:", subscriptionErr.message);
+                            return;
+                        }
+                        console.log("Subscription table created successfully");
+                    });
                 });
             });
         });
     });
+
 
     return db;
 }
