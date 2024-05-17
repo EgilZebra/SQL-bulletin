@@ -27,7 +27,7 @@ module.exports.getChannelNotes = (channelId) => {
                 resolve(row) ; //viewen
             }
         });
-    })
+    });
 }
 
 //view of all notes by a user
@@ -48,5 +48,5 @@ module.exports.getUserNotes = (userId) => {
                 resolve(row); //viewen
             }
         });
-    })
+    });
 }
