@@ -32,12 +32,12 @@ module.exports.getChannelNotes = (channelId, callback) => {
 module.exports.getUserNotes = (userId, callback) => {
     db.run(`
     CREATE OR REPLACE VIEW userMessages
-    AS SELECT users.id AS user,
-    notes.title, notes.content, notes.channel
-    FROM users
-    JOIN notes ON users.id = notes.user
-    WHERE users.id = ?
-    `, [username], (error) => {
+    AS SELECT User.user_ID AS user,
+    Note.note_ID, Note.channel_ID
+    FROM User
+    JOIN Note ON User.user_ID = Note.user_ID
+    WHERE User.user_ID = ?
+    `, [userId], (error) => {
         if (error) {
             console.log(error);
             callback(error);
