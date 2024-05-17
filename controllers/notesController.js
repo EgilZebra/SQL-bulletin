@@ -1,13 +1,14 @@
 
 const getNote = async ( req, res ) => {
-    let note;
+    let notes;
     if ( req.body.userID ) {
-        note = await getUserNotes( req.body.userId )
+        notes = await getUserNotes( req.body.userId )
     } else if ( req.body.channelID ) {
-        note = await getChannelNotes( req.body.channelId )
+        notes = await getChannelNotes( req.body.channelId )
     }
     try {
-        if ( note ) {
+        if ( notes ) {
+            let note
             res.status(200).json(note);
             return;
         } else {
