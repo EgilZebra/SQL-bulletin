@@ -12,13 +12,16 @@ const tableSchema = {
             channel_Name TEXT NOT NULL,
             channel_Owner INTEGER, FOREIGN KEY (chanel_Owener) REFERENCES user(user_ID)
         );`,
-    sql_MessageTable: `
-        CREATE TABLE IF NOT EXISTS Message (
-            message_ID INTEGER PRIMARY KEY,
-            message TEXT,
+        
+        sql_noteTable: `
+        CREATE TABLE IF NOT EXISTS Note (
+            note_ID INTEGER PRIMARY KEY,
+            note TEXT,
             created_at DATETIME,
-           FOREIGN KEY (user_ID) REFERENCES user(user_ID)
-        );`
+            user_ID INTEGER, 
+            FOREIGN KEY (user_ID) REFERENCES User(user_ID)
+        );
+    `
 };
 
 module.exports = {tableSchema};
