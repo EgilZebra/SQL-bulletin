@@ -1,6 +1,6 @@
 const express = require('express');
 const route = express.Router();
-const { getChannel, postChannel, checkSubscribers } = require('../controllers/channelController')
+const { getChannel, postChannel, checkSubscribers } = require('../controllers/channelController').default
 
 // create channel
 route.post( '/create', postChannel)
