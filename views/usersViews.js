@@ -12,27 +12,33 @@ const db = new sqlite.Database(dbPath, (error) => {
 //get view of all users subscribed to a channel
 module.exports.getChannelUsers = (channelID) => {
     return new Promise((resolve, reject) => {
-        db.run(`
-        CREATE OR REPLACE VIEW channelUsers
-        AS SELECT Subscription.channel_ID AS channel,
-        Subscription.user_ID AS user
-        FROM Subscription
-        JOIN Channel ON Subscription.channel_ID = Channel.channel_ID
-        WHERE Subscription.channel_ID = ?
-        `, [channelID], (error) => {
+        db.run(`DROP VIEW IF EXISTS channelUsers`, [], (error) => {
             if (error) {
                 console.log(error);
-                reject(error);
+                reject(error)
             } else {
-                db.all(`SELECT * FROM channelUsers`, [], (error, rows) => {
+                db.run(`
+                CREATE VIEW channelUsers
+                AS SELECT Subscription.channel_ID AS channel,
+                Subscription.user_ID AS user
+                FROM Subscription
+                WHERE Subscription.channel_ID = ?
+                `, [channelID], (error) => {
                     if (error) {
                         console.log(error);
                         reject(error);
                     } else {
-                        resolve(rows);
+                        db.all(`SELECT * FROM channelUsers`, [], (error, rows) => {
+                            if (error) {
+                                console.log(error);
+                                reject(error);
+                            } else {
+                                resolve(rows);
+                            }
+                        });
                     }
                 });
             }
-        });
+        });        
     });
 }
