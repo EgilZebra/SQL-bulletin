@@ -2,10 +2,6 @@ const sqlite = require('sqlite3').verbose();
 const dbFilePath = './database/database.db';
 
 
-
-
-
-
 function initDatabase() {
     const db = new sqlite.Database(dbFilePath, (error) => {
         if (error) return console.log(error);
@@ -37,6 +33,8 @@ function initDatabase() {
             note TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             user_ID INTEGER, 
+            channel_ID INTEGER,
+            FOREIGN KEY (channel_ID) REFERENCES Channel(channel_ID)
             FOREIGN KEY (user_ID) REFERENCES User(user_ID)
         );
     `;
