@@ -1,15 +1,24 @@
-// import db!
+const sqlite = require("sqlite3");
+const path = require("path");
+
+const dbPath = path.join(__dirname, "..", "database", "database.db");
+
+const db = new sqlite.Database(dbPath, (error) => {
+    if (error) {
+        console.log(error);
+    }
+});
 
 export const createNewUser = async (Signup) => {
     const { username, password } = Signup;
-    return new Promise((resovle, reject) => {
+    return new Promise((resolve, reject) => {
         db.run('INSERT INTO User ( user_Name, user_Password ) VALUES ( ?, ? )', [ username, password ], function(error) {
             if (error) {
                 console.log(error);
                 reject(error);
             } else {
                 console.log('User added!');
-                resovle(true)
+                resolve(true)
             }
         })     
     })
@@ -22,7 +31,7 @@ export const checkUserName = async ( username ) => {
                 console.log(error);
                 reject(error);
             } else {
-                if ( row = undefined ) {
+                if ( row == undefined ) {
                     resolve(false)
                 } else {
                     resolve(true)
