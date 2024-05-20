@@ -23,15 +23,14 @@ module.exports.getChannelNotes = (channelId) => {
                 AS SELECT Channel.channel_ID AS channel,
                 Note.note_ID, Note.user_ID, Note.note
                 FROM Channel
-                JOIN Note ON Channel.channel_ID = Note.channel_ID
-                WHERE Channel.channel_ID = ${channelId}`
-                // , [channelId]
+                JOIN Note ON Channel.channel_ID = Note.channel_ID`
+                , []
                 , (error) => {
                     if (error) {
                         console.log(error);
                         reject(error);
                     } else {
-                        db.all(`SELECT * FROM channelNotes `, [], (error, rows) => {
+                        db.all(`SELECT * FROM channelNotes WHERE channel = ?`, [channelId], (error, rows) => {
                             if (error) {
                                 console.log(error);
                                 reject(error);
@@ -59,15 +58,14 @@ module.exports.getUserNotes = (userId) => {
                 AS SELECT User.user_ID AS user,
                 Note.note_ID, Note.channel_ID, Note.note
                 FROM User
-                JOIN Note ON User.user_ID = Note.user_ID
-                WHERE User.user_ID = ${userId}`
-                // , [userId]
+                JOIN Note ON User.user_ID = Note.user_ID`
+                , []
                 , (error) => {
                     if (error) {
                         console.log(error);
                         reject(error);
                     } else {
-                        db.all(`SELECT * FROM userNotes`, [], (error, rows) => {
+                        db.all(`SELECT * FROM userNotes WHERE user = ?`, [userId], (error, rows) => {
                             if (error) {
                                 console.log(error);
                                 reject(error);

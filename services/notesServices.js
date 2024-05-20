@@ -63,3 +63,18 @@ module.exports.changeANote = (noteId, text) => {
         });
     });
 }
+
+module.exports.isSubscribed = (user, channel) => {
+    return new Promise((resolve, reject) => {
+        db.get(`SELECT * FROM Subscription WHERE user_ID = ? AND channel_ID = ?`,
+            [user, channel],
+            (error, row) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(!!row)
+                }
+            }
+        );
+    });
+}

@@ -2,7 +2,8 @@ const {
     insertNote,
     findNote,
     deleteANote,
-    changeANote
+    changeANote,
+    isSubscribed
 } = require("../services/notesServices");
 const {
     getUserNotes,
@@ -27,13 +28,20 @@ const getNote = async ( req, res ) => {
 const getNotes = async (req, res) => {
     let notes;
     let target;
-    if ( req.body.userID ) {
+
+    if ( req.body.userID && !req.body.channelID ) {
         notes = await getUserNotes( req.body.userID );
         target = "User";
-    } else if ( req.body.channelID ) {
-        notes = await getChannelNotes( req.body.channelID );
-        target = "Channel";
+    } else if ( req.body.userID && req.body.channelID ) {
+        const subscribed = await isSubscribed(req.body.userID, req.body.channelID);
+        if (subscribed) {
+            notes = await getChannelNotes( req.body.channelID );
+            target = "Channel";
+        }
+    } else {
+        res.status(400).send("UserID and/or channelID missing");
     }
+
     try {
         if ( notes ) {
             res.status(200).json({notes: notes});
