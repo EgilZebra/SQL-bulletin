@@ -9,5 +9,6 @@ route.post( '/subscribe', getChannel)
 // how many subscribers to a channel
 route.get('/', checkSubscribers)
 
+module.exports = route;
 // route.delete( '/', removeChannel)
 // route.put( '/', updateChannel)
