@@ -71,10 +71,12 @@ const postNote = async ( req, res ) => {
     const { userID, channels, text } = req.body; //channels = an array of channelIDs
     console.log(note)
     try {
-        if ( note ) {
+        if ( note && ( channels !== undefined  ) && (channels.length > 0) ) {
             const noteID = await insertNote(userID, text); //adds note to note table and returns its id
             await placeNote(noteID, channels); //adds note id to channels in notesInChannel table
             res.status(200).json({message: "Note added"});
+        } else {
+            res.status(400).json({message: 'faulty request!'})
         }
     } catch (error) {
         res.status(500).json({message: "Failed to add note", error: error});
