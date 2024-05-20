@@ -21,7 +21,7 @@ module.exports.getChannelNotes = (channelId) => {
                 db.run(`
                 CREATE VIEW channelNotes
                 AS SELECT Channel.channel_ID AS channel,
-                Note.note_ID, Note.user_ID, Note.note
+                Note.note_ID, Note.user_ID, Note.note, Note.created_at
                 FROM Channel
                 JOIN NotesInChannel ON Channel.channel_ID = NotesInChannel.channel_ID
                 JOIN Note ON NotesInChannel.note_ID = Note.note_ID
@@ -32,7 +32,7 @@ module.exports.getChannelNotes = (channelId) => {
                         console.log(error);
                         reject(error);
                     } else {
-                        db.all(`SELECT * FROM channelNotes WHERE channel = ?`, [channelId], (error, rows) => {
+                        db.all(`SELECT * FROM channelNotes WHERE channel = ? ORDER BY created_at`, [channelId], (error, rows) => {
                             if (error) {
                                 console.log(error);
                                 reject(error);
@@ -58,7 +58,7 @@ module.exports.getUserNotes = (userId) => {
                 db.run(`
                 CREATE VIEW userNotes
                 AS SELECT User.user_ID AS user,
-                Note.note_ID, Note.note
+                Note.note_ID, Note.note, Note.created_at
                 FROM User
                 JOIN Note ON User.user_ID = Note.user_ID`
                 , []
@@ -67,7 +67,7 @@ module.exports.getUserNotes = (userId) => {
                         console.log(error);
                         reject(error);
                     } else {
-                        db.all(`SELECT * FROM userNotes WHERE user = ?`, [userId], (error, rows) => {
+                        db.all(`SELECT * FROM userNotes WHERE user = ? ORDER BY created_at`, [userId], (error, rows) => {
                             if (error) {
                                 console.log(error);
                                 reject(error);
