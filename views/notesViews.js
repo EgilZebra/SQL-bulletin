@@ -41,6 +41,7 @@ module.exports.getChannelNotes = (channelId) => {
 module.exports.getUserNotes = (userId) => {
     return new Promise((resolve, reject) => {
         db.run(`
+
         CREATE OR REPLACE VIEW userNotes
         AS SELECT User.user_ID AS user,
         Note.note_ID, Note.channel_ID
