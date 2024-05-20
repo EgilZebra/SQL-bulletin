@@ -2,6 +2,7 @@ const sqlite = require("sqlite3").verbose();
 
 
 
+const { error } = require("console");
 const path = require("path");
 
 const dbPath = path.join(__dirname, "..", "database", "database.db");
@@ -126,12 +127,59 @@ const updateChannel = (Channel) => {
     })
 }
 
+/* can use db.get or db.all but only if find channel all */
+/* ********************************************************************** */
+const subToChannel = (user_ID, channel_ID) => {
+    return new Promise((resolve, reject) => {
+        db.run(`INSERT INTO Subscription (user_ID, channel_ID) VALUES (?, ?)`, [user_ID, channel_ID], (error) => {
+            if (error) {
+                console.log('Error: could not subscribe to Channel, try again');
+                reject(new Error('Error: could not subscribe to Channel, try again'));
+            } else {
+                resolve();
+            }
+        });
+    });
+};
+
+
+const GetChannelbyID = ( channel_ID) => {
+    return new promise ((resolve, reject) => {
+        db.get(`SELECT * FROM Channel WHERE channel_ID = ?`, [channel_ID],
+            (error,channel) => {
+                if (error) { console.log('coudnt fint channel ID');
+                    reject(error);
+                } else {
+                    resolve (channel);
+                }
+            }
+        )
+    })
+} 
 
 
 
+const unsubToChannel = (user_ID, channel_ID) => {
+    return new Promise((resolve, reject) => {
+        db.run(`DELETE FROM Subscription WHERE user_ID = ? AND channel_ID = ?`,
+            [user_ID, channel_ID],
+            (error) => {
+                if (error) {
+                    console.log('Could not Unsubscribe!');
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            }
+        );
+    });
+};
+
+/* ********************************************************************** */
 
 
-module.exports = { insertChannel, findChannelName, findChannelALL, deleteChannel, updateChannel };
+
+module.exports = { insertChannel, findChannelName, findChannelALL, deleteChannel, updateChannel, subToChannel, GetChannelbyID, unsubToChannel};
 
 
 
