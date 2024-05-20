@@ -33,13 +33,20 @@ const getNotes = async (req, res) => {
         notes = await getUserNotes( req.body.userID );
         target = "User";
     } else if ( req.body.userID && req.body.channelID ) {
-        const subscribed = await isSubscribed(req.body.userID, req.body.channelID);
+
+        const {userID, channelID} = req.body
+
+        const subscribed = await isSubscribed(userID, channelID);
         if (subscribed) {
-            notes = await getChannelNotes( req.body.channelID );
+            notes = await getChannelNotes( channelID );
             target = "Channel";
+        } else {
+            res.status(403).send("User is not subscribed to this channel")
         }
+
     } else {
         res.status(400).send("UserID and/or channelID missing");
+        return;
     }
 
     try {
