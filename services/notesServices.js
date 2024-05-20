@@ -12,7 +12,7 @@ const db = new sqlite.Database(dbPath, (error) => {
 
 module.exports.insertNote = ( userID, text ) => {
     // const { userID, channelID, text } = note;
-    console.log(userID, channelID, text)
+    console.log(userID, text)
     return new Promise(( resolve, reject ) => {
         db.run(`INSERT INTO Note (note, user_ID) VALUES (?, ?)`,
         [text, userID],

@@ -53,7 +53,7 @@ function initDatabase() {
             note_ID INTEGER,
             channel_ID INTEGER,
             FOREIGN KEY (note_ID) REFERENCES Note(note_ID),
-            FOREIGN KEY (channel_ID REFERENCES) Channel(channel_ID)
+            FOREIGN KEY (channel_ID) REFERENCES Channel(channel_ID)
         );
     `
 
@@ -88,9 +88,10 @@ function initDatabase() {
 
                         db.run(sql_notes_channelsTable, noteInChannelErr => {
                             if (noteInChannelErr) {
-                                console.error("Error creating noteInChannel table:", noteInChannelErr.message);
+                                console.error("Error creating note location table:", noteInChannelErr.message);
                                 return;
                             }
+                            console.log("Note location table created successfully")
                         })
                     });
                 });

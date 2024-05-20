@@ -1,5 +1,6 @@
 const {
     insertNote,
+    placeNote,
     findNote,
     deleteANote,
     changeANote,
