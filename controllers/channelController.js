@@ -2,21 +2,22 @@ const { insertChannel, findChannelName, deleteChannel: deleteChannelService, upd
 
 /* create=insert=post */
 const postChannel = async (req, res) => {
-    const { channel_ID, channel_Name, channel_Owner } = req.body;
-
-    if (!channel_Name || !channel_Owner || !channel_ID) {
+    const { channel_Name, channel_Owner } = req.body;
+    console.log(`channelName: ${channel_Name}, channelowner: ${channel_Owner}`)
+    if (!channel_Name || !channel_Owner ) {
         return res.status(400).json({
             error: "Required fields are missing. The request must include channel_ID, channel_Name, and channel_Owner.",
         });
     }
 
     try {
-        const newChannel = await insertChannel(channel_ID, channel_Name, channel_Owner);
+        const newChannel = await insertChannel( channel_Name, channel_Owner);
 
-        res.status(200).json({
-            message: "Success! New channel created",
-            channel_Id: newChannel.channel_Id
-        });
+        if ( newChannel ) {
+            res.status(200).json({
+                message: "Success! New channel created"
+            });
+        }
 
     } catch (error) {
         console.error("Could not add channel", error);
