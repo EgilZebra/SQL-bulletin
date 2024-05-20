@@ -3,7 +3,8 @@ const {
     findNote,
     deleteANote,
     changeANote,
-    isSubscribed
+    isSubscribed,
+    removeNoteFromChannels
 } = require("../services/notesServices");
 const {
     getUserNotes,
@@ -64,14 +65,14 @@ const getNotes = async (req, res) => {
 const postNote = async ( req, res ) => {
     const note = {
         text: req.body.text,
-        userID: req.body.userID,
-        channelID: req.body.channelID
+        userID: req.body.userID
     }
-    const { userID, channelID, text } = req.body;
+    const { userID, channels, text } = req.body; //channels = an array of channelIDs
     console.log(note)
     try {
         if ( note ) {
-            await insertNote(userID, channelID, text);
+            const noteID = await insertNote(userID, text); //adds note to note table and returns its id
+            await placeNote(noteID, channels); //adds note id to channels in notesInChannel table
             res.status(200).json({message: "Note added"});
         }
     } catch (error) {
@@ -85,6 +86,9 @@ const deleteNote = async (req, res) => {
     if (note.user_ID == userID) {
         try {
             await deleteANote(noteID);
+
+            await removeNoteFromChannels(noteID);
+
             res.status(200).send("Note deleted");
         } catch (error) {
             res.status(500).json({message: "Failed to delete note", error: error});

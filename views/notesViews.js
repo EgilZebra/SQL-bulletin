@@ -23,9 +23,11 @@ module.exports.getChannelNotes = (channelId) => {
                 AS SELECT Channel.channel_ID AS channel,
                 Note.note_ID, Note.user_ID, Note.note
                 FROM Channel
-                JOIN Note ON Channel.channel_ID = Note.channel_ID`
-                , []
-                , (error) => {
+                JOIN NotesInChannel ON Channel.channel_ID = NotesInChannel.channel_ID
+                JOIN Note ON NotesInChannel.note_ID = Note.note_ID
+                `,
+                [],
+                (error) => {
                     if (error) {
                         console.log(error);
                         reject(error);
@@ -56,7 +58,7 @@ module.exports.getUserNotes = (userId) => {
                 db.run(`
                 CREATE VIEW userNotes
                 AS SELECT User.user_ID AS user,
-                Note.note_ID, Note.channel_ID, Note.note
+                Note.note_ID, Note.note
                 FROM User
                 JOIN Note ON User.user_ID = Note.user_ID`
                 , []
