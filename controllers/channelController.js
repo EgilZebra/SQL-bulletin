@@ -1,4 +1,4 @@
-const { insertChannel, findChannelName, deleteChannel: deleteChannelService, updateChannel: updateChannelService } = require("../services/channelServices");
+const { unsubToChannel,subToChannel,GetChannelbyID, insertChannel, findChannelName, deleteChannel: deleteChannelService, updateChannel: updateChannelService } = require("../services/channelServices");
 
 /* create=insert=post */
 const postChannel = async (req, res) => {
@@ -68,9 +68,39 @@ const updateChannel = async (req, res) => {
     }
 };
 
+const SubscriptionToChannel = async (req, res) => {
+    const { channel_ID, user_ID, action } = req.body;
+
+    if (!(channel_ID && user_ID && action)) {
+        return res.status(400).json({ error: "Channel ID, user ID, and action must be provided" });
+    }
+
+    try {
+        const channelExists = await GetChannelbyID(channel_ID);
+        if (!channelExists) {
+            return res.status(404).json({ error: 'Channel does not exist' });
+        }
+
+        if (action === 'subscribe') {
+            await subToChannel(channel_ID, user_ID);
+            res.status(200).json({ status: "SUCCESS", message: "Subscribed to channel successfully" });
+        } else if (action === 'unsubscribe') {
+            await unsubToChannel(channel_ID, user_ID);
+            res.status(200).json({ status: "SUCCESS", message: "Unsubscribed from channel successfully" });
+        } else {
+            return res.status(400).json({ error: 'Wrong action' });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal server error');
+    }
+};
+
+
 module.exports = {
     getChannel,
     postChannel,
     deleteChannel,
-    updateChannel
+    updateChannel,
+    SubscriptionToChannel
 };

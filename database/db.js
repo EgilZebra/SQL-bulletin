@@ -32,9 +32,7 @@ function initDatabase() {
             note_ID INTEGER PRIMARY KEY,
             note TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            user_ID INTEGER, 
-            channel_ID INTEGER,
-            FOREIGN KEY (channel_ID) REFERENCES Channel(channel_ID),
+            user_ID INTEGER,
             FOREIGN KEY (user_ID) REFERENCES User(user_ID)
         );
     `;
@@ -48,6 +46,16 @@ function initDatabase() {
             FOREIGN KEY (channel_ID) REFERENCES Channel(channel_ID)
         );
     `;
+
+    const sql_notes_channelsTable = `
+        CREATE TABLE IF NOT EXISTS NotesInChannel (
+            noteInChannel_ID INTEGER PRIMARY KEY,
+            note_ID INTEGER,
+            channel_ID INTEGER,
+            FOREIGN KEY (note_ID) REFERENCES Note(note_ID),
+            FOREIGN KEY (channel_ID) REFERENCES Channel(channel_ID)
+        );
+    `
 
     db.serialize(() => {
         db.run(sql_userTable, userErr => {
@@ -77,6 +85,14 @@ function initDatabase() {
                             return;
                         }
                         console.log("Subscription table created successfully");
+
+                        db.run(sql_notes_channelsTable, noteInChannelErr => {
+                            if (noteInChannelErr) {
+                                console.error("Error creating note location table:", noteInChannelErr.message);
+                                return;
+                            }
+                            console.log("Note location table created successfully")
+                        })
                     });
                 });
             });

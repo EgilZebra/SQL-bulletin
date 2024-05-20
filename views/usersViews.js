@@ -22,13 +22,12 @@ module.exports.getChannelUsers = (channelID) => {
                 AS SELECT Subscription.channel_ID AS channel,
                 Subscription.user_ID AS user
                 FROM Subscription
-                WHERE Subscription.channel_ID = ?
-                `, [channelID], (error) => {
+                `, [], (error) => {
                     if (error) {
                         console.log(error);
                         reject(error);
                     } else {
-                        db.all(`SELECT * FROM channelUsers`, [], (error, rows) => {
+                        db.all(`SELECT * FROM channelUsers WHERE channel = ?`, [channelID], (error, rows) => {
                             if (error) {
                                 console.log(error);
                                 reject(error);

@@ -25,13 +25,12 @@ module.exports.getUserChannels = (userId) => {
                 Channel.channel_Name
                 FROM User
                 INNER JOIN Channel ON User.user_ID = Channel.channel_Owner
-                WHERE User.user_ID = ?
                 `, [userId], (error) => {
                     if (error) {
                         console.log(error);
                         reject(error);
                     } else {
-                        db.all(`SELECT * FROM userChannels`, [], (error, rows) => {
+                        db.all(`SELECT * FROM userChannels WHERE user = ?`, [userId], (error, rows) => {
                             if (error) {
                                 console.log(error);
                                 reject(error);
@@ -55,13 +54,12 @@ module.exports.getUserSubscriptions = (userId) => {
         Channel.channel_ID AS channel
         FROM Subscription
         INNER JOIN Channel ON Subscription.channel_ID = Channel.channel_ID
-        WHERE Subscription.user_ID = ?
-        `, [userId], (error) => {
+        `, [], (error) => {
             if (error) {
                 console.log(error);
                 reject(error);
             } else {
-                db.all(`SELECT * FROM userSubscriptions`, [], (error, rows) => {
+                db.all(`SELECT * FROM userSubscriptions WHERE userSubscriptions = ?`, [userId], (error, rows) => {
                     if (error) {
                         console.log(error);
                         reject(error);

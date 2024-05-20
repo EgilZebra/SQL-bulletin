@@ -1,8 +1,11 @@
 const {
     insertNote,
+    placeNote,
     findNote,
     deleteANote,
-    changeANote
+    changeANote,
+    isSubscribed,
+    removeNoteFromChannels
 } = require("../services/notesServices");
 const {
     getUserNotes,
@@ -27,13 +30,28 @@ const getNote = async ( req, res ) => {
 const getNotes = async (req, res) => {
     let notes;
     let target;
-    if ( req.body.userID ) {
+
+    if ( req.body.userID && !req.body.channelID ) {
         notes = await getUserNotes( req.body.userID );
         target = "User";
-    } else if ( req.body.channelID ) {
-        notes = await getChannelNotes( req.body.channelID );
-        target = "Channel";
+    } else if ( req.body.userID && req.body.channelID ) {
+
+        const {userID, channelID} = req.body
+
+        const subscribed = await isSubscribed(userID, channelID);
+        if (subscribed) {
+            notes = await getChannelNotes( channelID );
+            target = "Channel";
+        } else {
+            res.status(403).send("User is not subscribed to this channel");
+            return;
+        }
+
+    } else {
+        res.status(400).send("UserID and/or channelID missing");
+        return;
     }
+
     try {
         if ( notes ) {
             res.status(200).json({notes: notes});
@@ -48,14 +66,14 @@ const getNotes = async (req, res) => {
 const postNote = async ( req, res ) => {
     const note = {
         text: req.body.text,
-        userID: req.body.userID,
-        channelID: req.body.channelID
+        userID: req.body.userID
     }
-    const { userID, channelID, text } = req.body;
+    const { userID, channels, text } = req.body; //channels = an array of channelIDs
     console.log(note)
     try {
         if ( note ) {
-            await insertNote(userID, channelID, text);
+            const noteID = await insertNote(userID, text); //adds note to note table and returns its id
+            await placeNote(noteID, channels); //adds note id to channels in notesInChannel table
             res.status(200).json({message: "Note added"});
         }
     } catch (error) {
@@ -69,6 +87,9 @@ const deleteNote = async (req, res) => {
     if (note.user_ID == userID) {
         try {
             await deleteANote(noteID);
+
+            await removeNoteFromChannels(noteID);
+
             res.status(200).send("Note deleted");
         } catch (error) {
             res.status(500).json({message: "Failed to delete note", error: error});

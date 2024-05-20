@@ -10,17 +10,39 @@ const db = new sqlite.Database(dbPath, (error) => {
     }
 });
 
-module.exports.insertNote = ( userID, channelID, text ) => {
+module.exports.insertNote = ( userID, text ) => {
     // const { userID, channelID, text } = note;
-    console.log(userID, channelID, text)
+    console.log(userID, text)
     return new Promise(( resolve, reject ) => {
-        db.run(`INSERT INTO Note (note, user_ID, channel_ID) VALUES (?, ?, ?)`, [text, userID, channelID], (error) => {
+        db.run(`INSERT INTO Note (note, user_ID) VALUES (?, ?)`,
+        [text, userID],
+        function (error) {
             if (error) {
                 console.log(error);
                 reject(error);
             } else {
-                resolve();
+                resolve(this.lastID);
             }
+        });
+    });
+}
+
+module.exports.placeNote = (id, channels) => {
+    return new Promise((resolve, reject) => {
+        channels.forEach(channel => {
+            db.run(`
+            INSERT INTO NotesInChannel (
+                note_ID,
+                channel_ID
+            ) VALUES (?, ?);
+            `, [id, channel], (error) => {
+                if (error) {
+                    console.log(error);
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
         });
     });
 }
@@ -51,6 +73,19 @@ module.exports.deleteANote = (id) => {
     });
 }
 
+module.exports.removeNoteFromChannels = (id) => {
+    return new Promise((resolve, reject) => {
+        db.run(`DELETE FROM NotesInChannel WHERE note_ID = ?`, [id], (error) => {
+            if (error) {
+                console.log(error);
+                reject(error);
+            } else {
+                resolve();
+            }
+        })
+    })
+}
+
 module.exports.changeANote = (noteId, text) => {
     return new Promise((resolve, reject) => {
         db.run(`UPDATE Note SET note = ? WHERE note_ID = ?`, [text, noteId], (error) => {
@@ -61,5 +96,20 @@ module.exports.changeANote = (noteId, text) => {
                 resolve();
             }
         });
+    });
+}
+
+module.exports.isSubscribed = (user, channel) => {
+    return new Promise((resolve, reject) => {
+        db.get(`SELECT * FROM Subscription WHERE user_ID = ? AND channel_ID = ?`,
+            [user, channel],
+            (error, row) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(!!row)
+                }
+            }
+        );
     });
 }
