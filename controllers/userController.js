@@ -1,5 +1,5 @@
 
-const { createNewUser, checkUserName } = require('../services/userServices')
+const { createNewUser, checkUserName, checkPassword } = require('../services/userServices')
 
 // Create a new user 
 const userSignup = async ( req, res ) => {
@@ -10,22 +10,25 @@ const userSignup = async ( req, res ) => {
     }
  
     try {
-        if (!Signup.username) {
+        
+        if (Signup.username === undefined) {
             res.status(400).send("You must write an username!");
             return;
-        } else if (!Signup.password) {
-        res.status(400).send("You must add a password!");
-        return;
-        } else if (checkUserName(Signup.username) = false) {
+        } else if (Signup.password === undefined) {
+            res.status(400).send("You must add a password!");
+            return;
+        } else if (await checkUserName(Signup.username)) {
             res.status(406).send("Username taken, try again!");
             return;
-        } else {
-            const success = await createNewUser(Signup)
+        } else 
+         {
+            const success = await createNewUser(Signup.username, Signup.password)
             if (success) {
                 res.status(200).send('User created and logged in!');
                 return;
             }
         }
+    
 
     } catch (error) {
         res.status(500).send('Cannot create user, sorry!');
@@ -41,7 +44,7 @@ const userLogin = async ( req, res ) => {
     }
     
     try {
-        if ( await checkPassword(Login) ) {
+        if ( await checkPassword( Login.username, Login.password ) ) {
             res.status(200).send('Login successful!');
             console.log('Login successful!');
         } else {

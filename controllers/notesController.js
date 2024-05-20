@@ -1,47 +1,72 @@
+const {
+    insertNote,
+    findNote,
+    deleteANote
+} = require("../services/notesServices")
+
 
 const getNote = async ( req, res ) => {
-    let note;
-    if ( req.body.userID ) {
-        note = await getUserNotes( req.body.userId )
-    } else if ( req.body.channelID ) {
-        note = await getChannelNotes( req.body.channelId )
-    }
+    const id = req.params.noteId;
+    const note = await findNote(id);
     try {
-        if ( note ) {
-            res.status(200).json(note);
-            return;
+        if (note) {
+            res.status(200).json(note)
         } else {
-            res.status(404).send('note not found!');
+            res.status(404).send("Note not found")
         }
     } catch (error) {
-        res.status(500).send('');
+        res.status(500).json({message: "Failed to fetch note", error: error})
     }
-};
+}
 
-const postNote = ( req, res ) => {
+const getNotes = async (req, res) => {
+    let notes;
+    let target
+    if ( req.body.userID ) {
+        notes = await getUserNotes( req.body.userId );
+        target = "User"
+    } else if ( req.body.channelID ) {
+        notes = await getChannelNotes( req.body.channelId );
+        target = "Channel"
+    }
+    try {
+        if ( notes ) {
+            res.status(200).json({notes: notes});
+            return;
+        } else {
+            res.status(404).send(`${target} not found!`);
+        }
+    } catch (error) {
+        res.status(500).json({message: "Failed to fetch notes", error: error});
+    }
+}
+
+const postNote = async ( req, res ) => {
     const note = {
-        note: req.body.note,
-        user_ID: req.body.userID,
-        channel_ID: req.body.channelID
+        text: req.body.note,
+        userID: req.body.userID,
+        channelID: req.body.channelID
     };
     try {
         if ( note ) {
-            insertNote(note);
-            res.status(200).send('')
-            return
+            await insertNote(note);
+            res.status(200).json({message: "Note added"});
         }
     } catch (error) {
-        res.status(500).send('')
+        res.status(500).json({message: "Failed to add note", error: error})
     }
 };
-// const deleteNote = ( req, res ) => {
-//     const noteID = req.body.noteID;
-//     try {
-//         res.status(200).send('')
-//     } catch (error) {
-//         res.status(500).send('')
-//     }
-// };
+
+const deleteNote = async (req, res) => {
+    const id = req.body.noteId;
+    try {
+        await deleteANote(id);
+        res.status(200).send("Note deleted")
+    } catch (error) {
+        res.status(500).json({message: "Failed to delete note", error: error})
+    }
+}
+
 // const changeNote = ( req, res ) => {
 //     try {
 //         res.status(200).send('')
@@ -52,7 +77,8 @@ const postNote = ( req, res ) => {
 
 module.exports = {
     getNote,
-    postNote
-    // deleteNote,
+    getNotes,
+    postNote,
+    deleteNote,
     // changeNote
 }

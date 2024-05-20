@@ -3,7 +3,7 @@ const database = require('./database/db');
 const express = require('express');
 
 const app = express();
-const db = database.initDatabase();
+database.initDatabase();
 
 const users = require("./routes/users");
 const notes = require("./routes/notes");

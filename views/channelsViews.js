@@ -1,7 +1,8 @@
 const sqlite = require("sqlite3").verbose();
 const path = require("path");
 
-const dbPath = path.join(__dirname, "..", "models", "channels.db");
+
+const dbPath = path.join(__dirname, "..", "database", "database.db");
 
 const db = new sqlite.Database(dbPath, (error) => {
     if (error) {
@@ -19,12 +20,19 @@ module.exports.getUserChannels = (userId) => {
         FROM User
         INNER JOIN Channel ON User.user_ID = Channel.channel_Owner
         WHERE User.user_ID = ?
-        `, [userId], (error, row) => {
+        `, [userId], (error) => {
             if (error) {
                 console.log(error);
                 reject(error);
             } else {
-                resolve(row);
+                db.all(`SELECT * FROM userChannels`, [], (error, rows) => {
+                    if (error) {
+                        console.log(error);
+                        reject(error);
+                    } else {
+                        resolve(rows);
+                    }
+                });
             }
         });
     });
@@ -40,12 +48,19 @@ module.exports.getUserSubscriptions = (userId) => {
         FROM Subscription
         INNER JOIN Channel ON Subscription.channel_ID = Channel.channel_ID
         WHERE Subscription.user_ID = ?
-        `, [userId], (error, row) => {
+        `, [userId], (error) => {
             if (error) {
                 console.log(error);
                 reject(error);
             } else {
-                resolve(row);
+                db.all(`SELECT * FROM userSubscriptions`, [], (error, rows) => {
+                    if (error) {
+                        console.log(error);
+                        reject(error);
+                    } else {
+                        resolve(rows)
+                    }
+                });
             }
         });
     });
