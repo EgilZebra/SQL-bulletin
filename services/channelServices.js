@@ -102,43 +102,51 @@ const deleteChannel = (channel_ID) => {
 /* ********************************************************************** */
 
 
-const updateChannel = (Channel) => {
-    const { channel_ID, channel_Name, channel_Owner } = Channel;
+// const updateChannel = ( channel_ID, channel_Name, channel_Owner ) => {
+//     // const { channel_ID, channel_Name, channel_Owner } = Channel;
 
-    return new Promise ((resolve, reject) => {
-        db.run( ` UPDATE Channel SET channel_Name = ?, channel_ID = ? WHERE channel_Owner = ? 
-        `,  [channel_ID, channel_Name, channel_Owner], (error) => {
-            if (error) {
-                reject(error)
-                console.log(error);
-            } else {
-                db.get(`SELECT * FROM Channel Where channel_Owner = ?`, [channel_Owner], (error,updatedChannel) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(updatedChannel);
-                    }
-                })
-            }
-        }
-    
-    
-    )
-    })
-}
+//     return new Promise((resolve, reject) => {
+//         db.run('UPDATE Channel SET channel_Name = ? WHERE channel_ID = ? AND channel_Owner = ?', 
+//             [channel_Name, channel_ID, channel_Owner], (error) => {
+//                 if (error) {
+//                     reject(error);
+//                     console.log(error);
+//                 } else {
+//                     db.get('SELECT * FROM Channel WHERE channel_ID = ?, [channel_ID]', (error, updatedChannel) => {
+//                         if (error) {
+//                             reject(error);
+//                         } else {
+//                             resolve(updatedChannel);
+//                         }
+//                     });
+//                 }
+//             });
+//     });
+// };
 
 /* can use db.get or db.all but only if find channel all */
 /* ********************************************************************** */
 const subToChannel = (user_ID, channel_ID) => {
     return new Promise((resolve, reject) => {
-        db.run(`INSERT INTO Subscription (user_ID, channel_ID) VALUES (?, ?)`, [user_ID, channel_ID], (error) => {
+        db.get(`SELECT * FROM Subscription WHERE ( user_ID = ? ) AND ( channel_ID = ? )`, [ user_ID, channel_ID], ( error, row ) => {
             if (error) {
-                console.log('Error: could not subscribe to Channel, try again');
-                reject(new Error('Error: could not subscribe to Channel, try again'));
+                reject(error)
             } else {
-                resolve();
+                if ( row === undefined ) {
+                    db.run(`INSERT INTO Subscription (user_ID, channel_ID) VALUES (?, ?)`, [user_ID, channel_ID], (error) => {
+                        if (error) {
+                            console.log('Error: could not subscribe to Channel, try again');
+                            reject(new Error('Error: could not subscribe to Channel, try again'));
+                        } else {
+                            resolve(true);
+                        }
+                    });
+                } else {
+                    resolve(false)
+                }
             }
-        });
+        })
+        
     });
 };
 
@@ -179,8 +187,4 @@ const unsubToChannel = (user_ID, channel_ID) => {
 
 
 
-module.exports = { insertChannel, findChannelName, findChannelALL, deleteChannel, updateChannel, subToChannel, GetChannelbyID, unsubToChannel};
-
-
-
-
+module.exports = { insertChannel, findChannelName, findChannelALL, deleteChannel,  subToChannel, GetChannelbyID, unsubToChannel};

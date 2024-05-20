@@ -100,16 +100,30 @@ module.exports.changeANote = (noteId, text) => {
 }
 
 module.exports.isSubscribed = (user, channel) => {
-    return new Promise((resolve, reject) => {
-        db.get(`SELECT * FROM Subscription WHERE user_ID = ? AND channel_ID = ?`,
-            [user, channel],
-            (error, row) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(!!row)
+    return new Promise(  (resolve, reject) => {
+        let result = [];
+        let promises = [];
+
+        for ( let i=0 ; i < channel.length ; i++ ) {
+            promises.push(new Promise((resolve, reject) => {
+                db.get(`SELECT * FROM Subscription WHERE user_ID = ? AND channel_ID = ?`,
+                [user, channel[i]],
+                (error, row) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        if (row) {
+                            result.push(channel[i]);
+                        } 
+                        resolve(result);
+                    }
                 }
-            }
-        );
+            );
+            }))
+            
+        }
+        Promise.all(promises)
+        .then(() => resolve(result))
+        .catch(error => reject(error));
     });
 }

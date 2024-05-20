@@ -1,4 +1,4 @@
-const { unsubToChannel,subToChannel,GetChannelbyID, insertChannel, findChannelName, deleteChannel: deleteChannelService, updateChannel: updateChannelService } = require("../services/channelServices");
+const { unsubToChannel,subToChannel,GetChannelbyID, insertChannel, findChannelName, deleteChannel: deleteChannelService  } = require("../services/channelServices");
 
 /* create=insert=post */
 const postChannel = async (req, res) => {
@@ -56,13 +56,18 @@ const deleteChannel = async (req, res) => {
 
 /* update */
 const updateChannel = async (req, res) => {
+    const { channel_Name, channel_Owner } = req.body;
+    const { id: channel_ID } = req.params;
+
     try {
-        const { channel_Name, channel_Owner } = req.body;
-        const { id: channel_ID } = req.params;
-
-        await updateChannelService({ channel_ID, channel_Name, channel_Owner });
-
-        res.status(200).send('Updated channel!');
+        
+        // const result = await updateChannelService( channel_ID, channel_Name, channel_Owner );
+        if ( await updateChannelService( channel_ID, channel_Name, channel_Owner ) ) {
+            res.status(200).send('Updated channel!');
+        } else {
+            res.status(400).send('faulty request')
+        }
+        
     } catch (error) {
         res.status(500).send('Internal server Error');
     }
@@ -82,8 +87,12 @@ const SubscriptionToChannel = async (req, res) => {
         }
 
         if (action === 'subscribe') {
-            await subToChannel(channel_ID, user_ID);
-            res.status(200).json({ status: "SUCCESS", message: "Subscribed to channel successfully" });
+            const result = await subToChannel(channel_ID, user_ID);
+            if ( result ) {
+                res.status(200).json({ status: "SUCCESS", message: "Subscribed to channel successfully" });
+            } else {
+                res.status(400).json({ status: 'Fail', message: 'Already subscribed'})
+            }
         } else if (action === 'unsubscribe') {
             await unsubToChannel(channel_ID, user_ID);
             res.status(200).json({ status: "SUCCESS", message: "Unsubscribed from channel successfully" });

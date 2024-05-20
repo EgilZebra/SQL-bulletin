@@ -1,3 +1,4 @@
+const { subscribe } = require("../routes/channels");
 const {
     insertNote,
     placeNote,
@@ -38,8 +39,8 @@ const getNotes = async (req, res) => {
 
         const {userID, channelID} = req.body
 
-        const subscribed = await isSubscribed(userID, channelID);
-        if (subscribed) {
+        const subscribed = await isSubscribed(userID, [channelID]);
+        if (subscribed !== undefined) {
             notes = await getChannelNotes( channelID );
             target = "Channel";
         } else {
@@ -70,13 +71,16 @@ const postNote = async ( req, res ) => {
     }
     const { userID, channels, text } = req.body; //channels = an array of channelIDs
     console.log(note)
+
+    let subscribedChannels = await isSubscribed( userID, channels);
+    // console.log({subscribedchannel: subscribedChannels});
     try {
-        if ( note && ( channels !== undefined  ) && (channels.length > 0) ) {
+        if ( note && subscribedChannels.length>0 ) {
             const noteID = await insertNote(userID, text); //adds note to note table and returns its id
-            await placeNote(noteID, channels); //adds note id to channels in notesInChannel table
+            await placeNote(noteID, subscribedChannels); //adds note id to channels in notesInChannel table
             res.status(200).json({message: "Note added"});
         } else {
-            res.status(400).json({message: 'faulty request!'})
+            res.status(400).send
         }
     } catch (error) {
         res.status(500).json({message: "Failed to add note", error: error});
