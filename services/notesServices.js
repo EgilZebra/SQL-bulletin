@@ -49,3 +49,16 @@ module.exports.deleteANote = (id) => {
         });
     });
 }
+
+module.exports.changeANote = (noteId, text) => {
+    return new Promise((resolve, reject) => {
+        db.run(`UPDATE Note SET note = ? WHERE note_ID = ?`, [text, noteId], (error) => {
+            if (error) {
+                console.log(error);
+                reject(error);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
