@@ -144,7 +144,7 @@ const subToChannel = (user_ID, channel_ID) => {
 
 
 const GetChannelbyID = ( channel_ID) => {
-    return new promise ((resolve, reject) => {
+    return new Promise ((resolve, reject) => {
         db.get(`SELECT * FROM Channel WHERE channel_ID = ?`, [channel_ID],
             (error,channel) => {
                 if (error) { console.log('coudnt fint channel ID');

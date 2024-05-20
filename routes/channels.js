@@ -1,11 +1,11 @@
 const express = require('express');
 const route = express.Router();
-const { getChannel, postChannel } = require('../controllers/channelController')
+const { getChannel, postChannel, SubscriptionToChannel } = require('../controllers/channelController')
 
 // create channel
 route.post( '/create', postChannel)
 // subscribe to channel
-route.post( '/subscribe', getChannel)
+route.post( '/subscribe', SubscriptionToChannel)
 // how many subscribers to a channel
 // route.get('/', checkSubscribers)
 

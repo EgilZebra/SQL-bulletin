@@ -41,7 +41,8 @@ const getNotes = async (req, res) => {
             notes = await getChannelNotes( channelID );
             target = "Channel";
         } else {
-            res.status(403).send("User is not subscribed to this channel")
+            res.status(403).send("User is not subscribed to this channel");
+            return;
         }
 
     } else {
