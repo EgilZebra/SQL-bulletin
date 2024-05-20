@@ -10,8 +10,9 @@ const db = new sqlite.Database(dbPath, (error) => {
     }
 });
 
-module.exports.insertNote = ( note ) => {
-    const { userID, channelID, text } = note;
+module.exports.insertNote = ( userID, channelID, text ) => {
+    // const { userID, channelID, text } = note;
+    console.log(userID, channelID, text)
     return new Promise(( resolve, reject ) => {
         db.run(`INSERT INTO Note (note, user_ID, channel_ID) VALUES (?, ?, ?)`, [text, userID, channelID], (error) => {
             if (error) {

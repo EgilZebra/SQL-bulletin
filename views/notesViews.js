@@ -24,13 +24,14 @@ module.exports.getChannelNotes = (channelId) => {
                 Note.note_ID, Note.user_ID, Note.note
                 FROM Channel
                 JOIN Note ON Channel.channel_ID = Note.channel_ID
-                WHERE Channel.channel_ID = ?
-                `, [channelId], (error) => {
+                WHERE Channel.channel_ID = ${channelId}`
+                // , [channelId]
+                , (error) => {
                     if (error) {
                         console.log(error);
                         reject(error);
                     } else {
-                        db.all(`SELECT * FROM channelNotes`, [], (error, rows) => {
+                        db.all(`SELECT * FROM channelNotes `, [], (error, rows) => {
                             if (error) {
                                 console.log(error);
                                 reject(error);
@@ -59,8 +60,9 @@ module.exports.getUserNotes = (userId) => {
                 Note.note_ID, Note.channel_ID, Note.note
                 FROM User
                 JOIN Note ON User.user_ID = Note.user_ID
-                WHERE User.user_ID = ?
-                `, [userId], (error) => {
+                WHERE User.user_ID = ${userId}`
+                // , [userId]
+                , (error) => {
                     if (error) {
                         console.log(error);
                         reject(error);

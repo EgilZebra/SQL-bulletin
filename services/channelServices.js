@@ -17,19 +17,19 @@ const db = new sqlite.Database(dbPath, (error) => {
 
 /* ********************************************************************** */
 
-const insertChannel = (Channel) => {
-    const { channel_ID, channel_Name, channel_Owner } = Channel;
+const insertChannel = ( channel_Name, channel_Owner) => {;
     
     return new Promise((resolve, reject) => {
         db.run(
-            `INSERT INTO Channel (channel_ID, channel_Name, channel_Owner) VALUES (?, ?, ?)`,
-            [channel_ID, channel_Name, channel_Owner],
+            'INSERT INTO Channel ( channel_Name, channel_Owner) VALUES ( ?, ?)',
+            [ channel_Name, channel_Owner],
             function (error) {
                 if (error) {
                     console.error(`Failed to add new channel: ${error.message}`);
                     reject(error);
                 } else {
-                    resolve({ channel_ID: this.lastID });
+
+                    resolve({ channel_ID: this.lastID || channel_ID });
                 }
             }
         );

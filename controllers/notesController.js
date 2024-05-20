@@ -4,6 +4,10 @@ const {
     deleteANote,
     changeANote
 } = require("../services/notesServices");
+const {
+    getUserNotes,
+    getChannelNotes
+} = require('../views/notesViews')
 
 
 const getNote = async ( req, res ) => {
@@ -24,10 +28,10 @@ const getNotes = async (req, res) => {
     let notes;
     let target;
     if ( req.body.userID ) {
-        notes = await getUserNotes( req.body.userId );
+        notes = await getUserNotes( req.body.userID );
         target = "User";
     } else if ( req.body.channelID ) {
-        notes = await getChannelNotes( req.body.channelId );
+        notes = await getChannelNotes( req.body.channelID );
         target = "Channel";
     }
     try {
@@ -43,13 +47,15 @@ const getNotes = async (req, res) => {
 
 const postNote = async ( req, res ) => {
     const note = {
-        text: req.body.note,
+        text: req.body.text,
         userID: req.body.userID,
         channelID: req.body.channelID
     }
+    const { userID, channelID, text } = req.body;
+    console.log(note)
     try {
         if ( note ) {
-            await insertNote(note);
+            await insertNote(userID, channelID, text);
             res.status(200).json({message: "Note added"});
         }
     } catch (error) {
@@ -58,11 +64,11 @@ const postNote = async ( req, res ) => {
 }
 
 const deleteNote = async (req, res) => {
-    const {noteId, userId} = req.body;
-    const note = await findNote(noteId);
-    if (note.user_ID == userId) {
+    const {noteID, userID} = req.body;
+    const note = await findNote(noteID);
+    if (note.user_ID == userID) {
         try {
-            await deleteANote(noteId);
+            await deleteANote(noteID);
             res.status(200).send("Note deleted");
         } catch (error) {
             res.status(500).json({message: "Failed to delete note", error: error});
@@ -75,11 +81,11 @@ const deleteNote = async (req, res) => {
 }
 
 const changeNote = async (req, res) => {
-    const {noteId, userId, text} = req.body;
-    const note = await findNote(noteId);
-    if (note.user_ID == userId) {
+    const {noteID, userID, text} = req.body;
+    const note = await findNote(noteID);
+    if (note.user_ID == userID) {
         try {
-            await changeANote(noteId, text);
+            await changeANote(noteID, text);
             res.status(200).send("Note edited");
         } catch (error) {
             res.status(500).json({message: "Failed to edit note", error: error});
