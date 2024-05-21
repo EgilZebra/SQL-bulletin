@@ -27,8 +27,8 @@ const postChannel = async (req, res) => {
 
 /* read=find=get */
 const getChannel = async (req, res) => {
-    const channelName = req.params.channel_Name;
-
+    const channelName = req.params.channel_ID;
+    console.log(channelName)
     try {
         const Channel = await findChannelName(channelName);
 

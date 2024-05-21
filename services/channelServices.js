@@ -50,12 +50,17 @@ const findChannelName = (channelName) => {
         db.get(
             `SELECT * FROM Channel WHERE channel_Name = ?`,
             [channelName],
-            (error, Channel) => {
+            (error, row) => {
                 if (error) {
                     reject(error);
                     console.error(error);
                 } else {
-                    resolve(Channel);
+                    if (row){
+                        resolve(true)
+                    } else {
+                        resolve(false)
+                    }
+                    
                 }
             }
         );
